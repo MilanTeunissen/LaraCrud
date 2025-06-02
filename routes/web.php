@@ -7,6 +7,10 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+// Public Routes
+Route::get('/products/{product}/view-single', [\App\Http\Controllers\productController::class, 'view'])->name('products.viewSingle');
+Route::post('/products/{product}/decrement-stock', [\App\Http\Controllers\productController::class, 'decrementStock'])->name('products.decrementStock');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');

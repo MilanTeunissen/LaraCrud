@@ -82,6 +82,9 @@ export default function Index() {
                                         <Link href={route('products.edit', product.id)}>
                                             <Button className="bg-slate-600 hover:bg-slate-700">Edit</Button>
                                         </Link>
+                                        <Link href={route('products.viewSingle', product.id)}>
+                                            <Button className="transition duration-300 ease-in-out bg-green-300 hover:bg-green-600">View</Button>
+                                        </Link>
                                         <Button disabled={processing} onClick={() => handleDelete(product.id, product.name)} className="bg-red-500 hover:bg-red-700">Delete</Button>
                                     </TableCell>
                                 </TableRow>
