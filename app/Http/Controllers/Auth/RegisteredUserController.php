@@ -18,6 +18,23 @@ class RegisteredUserController extends Controller
     /**
      * Show the registration page.
      */
+    private function getUsers()
+    {
+        return User::all();
+    }
+    public function index() {
+        $users = $this->getUsers();
+        return Inertia::render('dashboard', compact('users'));
+    }
+
+    public function updateRank(Request $request, User $user)
+    {
+        $user->is_admin = $request->input('is_admin');
+        $user->save();
+
+        return redirect()->back();
+    }
+
     public function create(): Response
     {
         return Inertia::render('auth/register');

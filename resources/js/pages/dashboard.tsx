@@ -1,7 +1,8 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, usePage, router } from '@inertiajs/react';
+import { useState } from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -10,26 +11,72 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+}
+
+interface PageProps {
+    users?: User[];
+}
+
+export default function Index() {
+    const { users } = usePage().props as PageProps;
+    const [updatingId, setUpdatingId] = useState<number | null>(null);
+
+    const handleRankChange = (userId: number, isAdmin: boolean) => {
+        setUpdatingId(userId);
+        router.put(
+            route('users.updateRank', userId),
+            { is_admin: isAdmin ? 1 : 0 },
+            {
+                onFinish: () => setUpdatingId(null),
+            }
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+            <Head title="Products" />
+            {users && users.length > 0 ? (
+                <div className="m-4">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[100px]">ID</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>E-mail</TableHead>
+                                <TableHead>User rank</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {users.map((user) => (
+                                <TableRow key={user.id}>
+                                    <TableCell className="font-medium">{user.id}</TableCell>
+                                    <TableCell>{user.name}</TableCell>
+                                    <TableCell>{user.email}</TableCell>
+                                    <TableCell>
+                                        <select
+                                            value={user.is_admin ? 'admin' : 'user'}
+                                            onChange={e => handleRankChange(user.id, e.target.value === 'admin')}
+                                            disabled={updatingId === user.id}
+                                        >
+                                            <option value="user">User</option>
+                                            <option value="admin">Admin</option>
+                                        </select>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
                 </div>
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+            ) : (
+                <div className="m-4">
+                    <p className="text-gray-500">No users found.</p>
                 </div>
-            </div>
+            )}
         </AppLayout>
     );
 }

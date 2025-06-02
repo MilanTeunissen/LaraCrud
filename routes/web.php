@@ -12,9 +12,8 @@ Route::get('/products/{product}/view-single', [\App\Http\Controllers\productCont
 Route::post('/products/{product}/decrement-stock', [\App\Http\Controllers\productController::class, 'decrementStock'])->name('products.decrementStock');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'index'])->name('dashboard');
+    Route::put('/users/{user}/rank', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'updateRank'])->name('users.updateRank');
 
     Route::get('/products', [\App\Http\Controllers\productController::class, 'index'])->name('products.index');
     Route::get('/products/create', [\App\Http\Controllers\productController::class, 'create'])->name('products.create');
