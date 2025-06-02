@@ -36,7 +36,7 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { products = [], flash = {}, auth } = usePage().props as Partial<PageProps>;
+    const { products = [], flash = {}, auth } = usePage().props as PageProps;
     const currentUser = auth?.user;
     const { processing, delete: destroy } = useForm();
 
@@ -50,9 +50,13 @@ export default function Index() {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Products" />
             <div className="m-4">
-                <Link href={route('products.create')}>
-                    <Button>Create a product</Button>
-                </Link>
+                {Boolean(currentUser?.is_admin) && (
+                    <>
+                        <Link href={route('products.create')}>
+                            <Button>Create a product</Button>
+                        </Link>
+                    </>
+                )}
             </div>
             <div className="m-4">
                 {flash.message && (

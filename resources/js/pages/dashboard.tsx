@@ -22,7 +22,7 @@ interface PageProps {
     users?: User[];
 }
 
-export default function Index() {
+export default function Dashboard() {
     const { users, auth } = usePage().props as PageProps;
     const currentUser = auth?.user;
     const [updatingId, setUpdatingId] = useState<number | null>(null);
