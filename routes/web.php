@@ -24,6 +24,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Products management page
     Route::get('/products', [\App\Http\Controllers\productController::class, 'index'])->name('products.index');
 
+});
+
+Route::middleware([\App\Http\Middleware\IsAdmin::class])->group(function () {
+
+    // Change user rank
+    Route::put('/users/{user}/rank', [\App\Http\Controllers\Auth\RegisteredUserController::class, 'updateRank'])->name('users.updateRank');
+
     // Create products
     Route::get('/products/create', [\App\Http\Controllers\productController::class, 'create'])->name('products.create');
     Route::post('/products', [\App\Http\Controllers\productController::class, 'store'])->name('products.store');

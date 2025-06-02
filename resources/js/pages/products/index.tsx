@@ -14,13 +14,20 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface user {
+    id: number;
+    name: string;
+    email: string;
+    is_admin: boolean;
+}
+
 interface Product {
     id: number;
     name: string;
     price: number;
     stock: number;
     description: string;
-    user: { id: number; name: string; email: string };
+    user: user;
 }
 
 interface PageProps {
@@ -29,7 +36,8 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { products = [], flash = {} } = usePage().props as Partial<PageProps>;
+    const { products = [], flash = {}, auth } = usePage().props as Partial<PageProps>;
+    const currentUser = auth?.user;
     const { processing, delete: destroy } = useForm();
 
     const handleDelete = (id: number, name: string) => {
@@ -79,13 +87,17 @@ export default function Index() {
                                     <TableCell className="truncate max-w-[150px]">{product.description}</TableCell>
                                     <TableCell>{product.user?.name ?? 'Unknown'}</TableCell>
                                     <TableCell className="text-center space-x-2">
-                                        <Link href={route('products.edit', product.id)}>
-                                            <Button className="bg-slate-600 hover:bg-slate-700">Edit</Button>
-                                        </Link>
                                         <Link href={route('products.viewSingle', product.id)}>
                                             <Button className="transition duration-300 ease-in-out bg-green-300 hover:bg-green-600">View</Button>
                                         </Link>
-                                        <Button disabled={processing} onClick={() => handleDelete(product.id, product.name)} className="bg-red-500 hover:bg-red-700">Delete</Button>
+                                        {Boolean(currentUser?.is_admin) && (
+                                            <>
+                                                <Link href={route('products.edit', product.id)}>
+                                                    <Button className="bg-slate-600 hover:bg-slate-700">Edit</Button>
+                                                </Link>
+                                                <Button disabled={processing} onClick={() => handleDelete(product.id, product.name)} className="bg-red-500 hover:bg-red-700">Delete</Button>
+                                            </>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}

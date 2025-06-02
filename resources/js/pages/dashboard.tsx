@@ -23,7 +23,8 @@ interface PageProps {
 }
 
 export default function Index() {
-    const { users } = usePage().props as PageProps;
+    const { users, auth } = usePage().props as PageProps;
+    const currentUser = auth?.user;
     const [updatingId, setUpdatingId] = useState<number | null>(null);
 
     const handleRankChange = (userId: number, isAdmin: boolean) => {
@@ -58,14 +59,18 @@ export default function Index() {
                                     <TableCell>{user.name}</TableCell>
                                     <TableCell>{user.email}</TableCell>
                                     <TableCell>
-                                        <select
-                                            value={user.is_admin ? 'admin' : 'user'}
-                                            onChange={e => handleRankChange(user.id, e.target.value === 'admin')}
-                                            disabled={updatingId === user.id}
-                                        >
-                                            <option value="user">User</option>
-                                            <option value="admin">Admin</option>
-                                        </select>
+                                        {Boolean(currentUser?.is_admin) ? (
+                                            <select
+                                                value={user.is_admin ? 'admin' : 'user'}
+                                                onChange={e => handleRankChange(user.id, e.target.value === 'admin')}
+                                                disabled={updatingId === user.id}
+                                            >
+                                                <option value="user">User</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                        ) : (
+                                            user.is_admin ? 'admin' : 'user'
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}
